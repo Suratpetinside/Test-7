@@ -381,26 +381,29 @@
                 </div>
 
                 <!-- ตาราง SOAP และประวัติการรักษา (Patient History) -->
-                <div class="border border-black">
-                    <div class="bg-gray-100 font-bold text-center border-b border-black py-1 text-[11px]">
+                <div class="border border-black shadow-xs rounded-lg overflow-hidden">
+                    <div class="bg-gray-100 font-bold text-center border-b border-black py-1.5 text-[11px] tracking-wide">
                         ประวัติสัตว์ป่วย (Patient History) / SOAP Note
                     </div>
-                 <div class="grid grid-cols-12 border-b border-black text-center font-bold text-[10px] bg-gray-50">
-                        <div class="col-span-2 border-r border-black py-1">วันที่ (Date)</div>
-                        <div class="col-span-1 border-r border-black py-1">SOAP</div>
-                        <div class="col-span-8 border-r border-black py-1">รายละเอียดอาการ / การวินิจฉัย / การรักษา</div>
-                        <div class="col-span-1 py-1">Price</div>
+                    <div class="grid grid-cols-12 border-b border-black text-center font-bold text-[10px] bg-gray-50">
+                        <div class="col-span-2 border-r border-black py-1.5">วันที่ (Date)</div>
+                        <div class="col-span-1 border-r border-black py-1.5">SOAP</div>
+                        <div class="col-span-8 border-r border-black py-1.5">รายละเอียดอาการ / การวินิจฉัย / การรักษา</div>
+                        <div class="col-span-1 py-1.5">Price (฿)</div>
                     </div>
                     <!-- แถวบันทึกข้อมูลหลัก -->
-                    <div class="grid grid-cols-12 text-[11px] min-h-[140px] items-start">
-                        <div id="printDate" class="col-span-2 border-r border-b border-black p-1.5 text-center font-medium">15 ต.ค. 2026</div>
-                        <div class="col-span-1 border-r border-b border-black p-1.5 text-center font-bold text-[#2D6A4F]">S/O<br>A/P</div>
-                        <div class="col-span-8 border-r border-b border-black p-1.5">
-                            <textarea id="docNoteInput" rows="5" placeholder="กรอกอาการ ผลตรวจ การวินิจฉัย และคำแนะนำ (SOAP)..." class="w-full p-1 bg-transparent border-none focus:outline-none resize-none text-xs text-black"></textarea>
+                    <div class="grid grid-cols-12 text-[11px] min-h-[140px] items-stretch border-b border-black">
+                        <div id="printDate" class="col-span-2 border-r border-black p-2 text-center font-medium flex items-center justify-center bg-gray-50/50">15 ต.ค. 2026</div>
+                        <div class="col-span-1 border-r border-black p-2 text-center font-bold text-[#2D6A4F] flex flex-col items-center justify-center bg-emerald-50/30">
+                            <span>S/O</span>
+                            <span class="text-[10px] text-gray-400 my-0.5">|</span>
+                            <span>A/P</span>
                         </div>
-                        <!-- ส่วนที่เพิ่ม: ช่องกรอกราคาสำหรับแก้ไข -->
-                        <div class="col-span-1 border-b border-black p-1 text-center flex items-center justify-center">
-                            <input type="text" id="docPriceInput" value="300" placeholder="ราคา" class="w-full text-center p-1 bg-transparent border-none focus:outline-none text-xs text-black font-semibold">
+                        <div class="col-span-8 border-r border-black p-2 flex items-center">
+                            <textarea id="docNoteInput" rows="5" placeholder="กรอกอาการ ผลตรวจ การวินิจฉัย และคำแนะนำ (SOAP)..." class="w-full p-2 bg-white border border-dashed border-gray-300 rounded-md focus:border-[#2D6A4F] focus:outline-none resize-none text-xs text-black shadow-inner"></textarea>
+                        </div>
+                        <div class="col-span-1 p-1 text-center flex items-center justify-center bg-emerald-50/20">
+                            <input type="text" id="docPriceInput" value="300" placeholder="ราคา" class="w-full text-center p-2 bg-white border border-gray-300 rounded-md focus:border-[#2D6A4F] focus:outline-none text-xs text-black font-bold shadow-inner">
                         </div>
                     </div>
                     <!-- แถวว่างสำรองแบบฟอร์มกระดาษจริง -->
@@ -459,8 +462,8 @@
                 gender: "ผู้ (ทำหมันแล้ว)", 
                 weight: "5.2 กก.",
                 history: [
-                    { date: "15 ต.ค. 2026", service: "🩺 ตรวจสุขภาพประจำปี", doctor: "นพ.สพ.สมชาย", note: "สุขภาพแข็งแรงดี น้ำหนักตามเกณฑ์" },
-                    { date: "10 พ.ค. 2026", service: "💉 ฉีดวัคซีนรวมประจำปี", doctor: "สพ.ญ.วิไล", note: "ได้รับวัคซีนพิษสุนัขบ้าและรวม 5 โรคเรียบร้อย" }
+                    { date: "15 ต.ค. 2026", service: "🩺 ตรวจสุขภาพประจำปี", doctor: "นพ.สพ.สมชาย", note: "สุขภาพแข็งแรงดี น้ำหนักตามเกณฑ์", price: "300" },
+                    { date: "10 พ.ค. 2026", service: "💉 ฉีดวัคซีนรวมประจำปี", doctor: "สพ.ญ.วิไล", note: "ได้รับวัคซีนพิษสุนัขบ้าและรวม 5 โรคเรียบร้อย", price: "450" }
                 ]
             },
             { 
@@ -473,7 +476,7 @@
                 gender: "เมีย", 
                 weight: "3.8 กก.",
                 history: [
-                    { date: "15 ต.ค. 2026", service: "💉 ฉีดวัคซีนรวม", doctor: "สพ.ญ.วิไล", note: "ตรวจสุขภาพเบื้องต้นปกติก่อนฉีดวัคซีน" }
+                    { date: "15 ต.ค. 2026", service: "💉 ฉีดวัคซีนรวม", doctor: "สพ.ญ.วิไล", note: "ตรวจสุขภาพเบื้องต้นปกติก่อนฉีดวัคซีน", price: "400" }
                 ]
             },
             { 
@@ -486,7 +489,7 @@
                 gender: "ผู้", 
                 weight: "4.5 กก.",
                 history: [
-                    { date: "15 ต.ค. 2026", service: "💊 ทำแผล / ฉีดยา", doctor: "นพ.สพ.สมชาย", note: "แผลจากการกัด ทำความสะอาดและฉีดยาแก้อักเสบ" }
+                    { date: "15 ต.ค. 2026", service: "💊 ทำแผล / ฉีดยา", doctor: "นพ.สพ.สมชาย", note: "แผลจากการกัด ทำความสะอาดและฉีดยาแก้อักเสบ", price: "250" }
                 ]
             },
             { 
@@ -499,7 +502,7 @@
                 gender: "ผู้", 
                 weight: "28.0 กก.",
                 history: [
-                    { date: "01 ก.ย. 2026", service: "🛁 อาบน้ำตัดขน", doctor: "ทีม Grooming", note: "อาบน้ำเป่าขนแห้งสนิท" }
+                    { date: "01 ก.ย. 2026", service: "🛁 อาบน้ำตัดขน", doctor: "ทีม Grooming", note: "อาบน้ำเป่าขนแห้งสนิท", price: "500" }
                 ]
             },
             { 
@@ -512,7 +515,7 @@
                 gender: "เมีย", 
                 weight: "9.1 กก.",
                 history: [
-                    { date: "15 ส.ค. 2026", service: "🩺 ตรวจสุขภาพประจำปี", doctor: "สพ.ญ.วิไล", note: "ผิวหนังปกติ ระบบหายใจปกติ" }
+                    { date: "15 ส.ค. 2026", service: "🩺 ตรวจสุขภาพประจำปี", doctor: "สพ.ญ.วิไล", note: "ผิวหนังปกติ ระบบหายใจปกติ", price: "300" }
                 ]
             },
             { 
@@ -525,7 +528,7 @@
                 gender: "ผู้ (ทำหมันแล้ว)", 
                 weight: "21.5 กก.",
                 history: [
-                    { date: "10 ก.ค. 2026", service: "💉 ฉีดวัคซีนพิษสุนัขบ้า", doctor: "นพ.สพ.สมชาย", note: "ไม่มีอาการแพ้หลังฉีด" }
+                    { date: "10 ก.ค. 2026", service: "💉 ฉีดวัคซีนพิษสุนัขบ้า", doctor: "นพ.สพ.สมชาย", note: "ไม่มีอาการแพ้หลังฉีด", price: "200" }
                 ]
             }
         ];
@@ -615,7 +618,10 @@
                             <span>${h.service}</span>
                             <span class="text-gray-500 font-normal">📅 ${h.date}</span>
                         </div>
-                        <div class="text-gray-600">🩺 แพทย์ผู้ตรวจ: <span class="font-medium text-[#2D6A4F]">${h.doctor}</span></div>
+                        <div class="text-gray-600 flex justify-between">
+                            <span>🩺 แพทย์ผู้ตรวจ: <span class="font-medium text-[#2D6A4F]">${h.doctor}</span></span>
+                            <span class="font-bold text-[#2D6A4F]">💰 ค่ารักษา: ${h.price || '0'} บาท</span>
+                        </div>
                         <div class="text-gray-500 bg-white p-2 rounded-lg border border-[#E9F2EC] mt-1">📝 บันทึก: ${h.note || '-'}</div>
                     `;
                     container.appendChild(div);
@@ -655,6 +661,7 @@
             document.getElementById('printDate').innerText = item.date || "15 ต.ค. 2026";
             
             document.getElementById('docNoteInput').value = "";
+            document.getElementById('docPriceInput').value = "300";
 
             document.getElementById('doctor-log-modal').classList.remove('hidden');
             document.getElementById('doctor-log-modal').classList.add('flex');
@@ -668,6 +675,8 @@
         function saveDoctorLog() {
             let index = parseInt(document.getElementById('docQueueIndex').value);
             let note = document.getElementById('docNoteInput').value.trim();
+            let price = document.getElementById('docPriceInput').value.trim() || "0";
+
             if(!note) {
                 alert('กรุณากรอกบันทึกผลการตรวจ (SOAP) ก่อนบันทึก');
                 return;
@@ -679,7 +688,8 @@
                 date: item.date || "15 ต.ค. 2026",
                 service: item.service,
                 doctor: item.doctor,
-                note: note
+                note: note,
+                price: price
             };
 
             let foundPatient = patients.find(p => item.pet.includes(p.name));
@@ -801,126 +811,4 @@
         }
 
         function renderPagination(totalPages) {
-            const container = document.getElementById('paginationContainer');
-            container.innerHTML = '';
-
-            let prevBtn = document.createElement('button');
-            prevBtn.innerHTML = '◄ ก่อนหน้า';
-            prevBtn.className = `px-3 py-1 bg-white border border-[#D8E6DD] rounded-lg font-medium text-xs ${currentPage === 1 ? 'opacity-40 cursor-not-allowed' : 'text-[#2D6A4F] hover:bg-[#F0F5F1] cursor-pointer'}`;
-            prevBtn.disabled = currentPage === 1;
-            prevBtn.onclick = () => { if (currentPage > 1) { currentPage--; renderTable(); } };
-            container.appendChild(prevBtn);
-
-            for (let i = 1; i <= totalPages; i++) {
-                let pageBtn = document.createElement('button');
-                pageBtn.innerText = i;
-                pageBtn.className = `px-3 py-1 rounded-lg font-medium text-xs transition cursor-pointer ${currentPage === i ? 'bg-[#2D6A4F] text-white shadow-sm' : 'bg-white border border-[#D8E6DD] text-[#2D6A4F] hover:bg-[#F0F5F1]'}`;
-                pageBtn.onclick = () => { currentPage = i; renderTable(); };
-                container.appendChild(pageBtn);
-            }
-
-            let nextBtn = document.createElement('button');
-            nextBtn.innerHTML = 'ถัดไป ►';
-            nextBtn.className = `px-3 py-1 bg-white border border-[#D8E6DD] rounded-lg font-medium text-xs ${currentPage === totalPages ? 'opacity-40 cursor-not-allowed' : 'text-[#2D6A4F] hover:bg-[#F0F5F1] cursor-pointer'}`;
-            nextBtn.disabled = currentPage === totalPages;
-            nextBtn.onclick = () => { if (currentPage < totalPages) { currentPage++; renderTable(); } };
-            container.appendChild(nextBtn);
-        }
-
-        function openAddModal() {
-            document.getElementById('modalTitle').innerText = "เพิ่มนัดหมายใหม่";
-            document.getElementById('editIndex').value = "-1";
-            document.getElementById('inputPet').value = "";
-            document.getElementById('inputOwner').value = "";
-            document.getElementById('inputDate').value = document.getElementById('filterDate').value;
-            document.getElementById('inputTimeStart').value = "10:00";
-            document.getElementById('inputTimeEnd').value = "11:00";
-            document.getElementById('inputStatus').value = "รอเข้ารับบริการ";
-            document.getElementById('appointment-modal').classList.remove('hidden');
-            document.getElementById('appointment-modal').classList.add('flex');
-        }
-
-        function openEditModal(index) {
-            let item = appointments[index];
-            document.getElementById('modalTitle').innerText = "แก้ไขข้อมูลนัดหมาย";
-            document.getElementById('editIndex').value = index;
-            document.getElementById('inputPet').value = item.pet;
-            document.getElementById('inputOwner').value = item.owner;
-            document.getElementById('inputDate').value = item.date || "2026-10-15";
-            
-            let times = item.time.split('-');
-            if(times.length === 2) {
-                document.getElementById('inputTimeStart').value = times[0].trim();
-                document.getElementById('inputTimeEnd').value = times[1].trim();
-            }
-
-            document.getElementById('inputService').value = item.service;
-            document.getElementById('inputDoctor').value = item.doctor;
-            document.getElementById('inputStatus').value = item.status;
-
-            document.getElementById('appointment-modal').classList.remove('hidden');
-            document.getElementById('appointment-modal').classList.add('flex');
-        }
-
-        function closeModal() {
-            document.getElementById('appointment-modal').classList.remove('flex');
-            document.getElementById('appointment-modal').classList.add('hidden');
-        }
-
-        function saveAppointment() {
-            let editIndex = parseInt(document.getElementById('editIndex').value);
-            let pet = document.getElementById('inputPet').value.trim();
-            let owner = document.getElementById('inputOwner').value.trim();
-            let date = document.getElementById('inputDate').value;
-            let timeStart = document.getElementById('inputTimeStart').value;
-            let timeEnd = document.getElementById('inputTimeEnd').value;
-            let service = document.getElementById('inputService').value;
-            let doctor = document.getElementById('inputDoctor').value;
-            let status = document.getElementById('inputStatus').value;
-
-            if(!pet || !owner || !date) {
-                alert('กรุณากรอกวันที่ ชื่อสัตว์เลี้ยง และชื่อเจ้าของให้ครบถ้วน');
-                return;
-            }
-
-            let newItem = {
-                date: date,
-                time: `${timeStart}-${timeEnd}`,
-                pet: pet,
-                owner: owner,
-                service: service,
-                doctor: doctor,
-                status: status
-            };
-
-            if(editIndex === -1) {
-                appointments.unshift(newItem);
-                currentPage = 1;
-            } else {
-                appointments[editIndex] = newItem;
-            }
-
-            document.getElementById('filterDate').value = date;
-            closeModal();
-            renderTable();
-        }
-
-        function deleteAppointment(index) {
-            if(confirm('คุณต้องการเปลี่ยนสถานะรายการนี้เป็น "ยกเลิก" ใช่หรือไม่?')) {
-                appointments[index].status = "ยกเลิก";
-                renderTable();
-            }
-        }
-
-        function refreshData() {
-            document.getElementById('searchInput').value = '';
-            currentStatusFilter = 'ทั้งหมด';
-            currentPage = 1;
-            filterByStatus('ทั้งหมด');
-            alert('รีเฟรชข้อมูลคิวล่าสุดเรียบร้อยแล้ว');
-        }
-
-        renderTable();
-    </script>
-</body>
-</html>
+            const container =
