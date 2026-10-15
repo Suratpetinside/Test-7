@@ -10,26 +10,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Prompt', sans-serif; }
-        /* สไตล์สำหรับการสั่งปริ้นเอกสารเวชระเบียนผ่านเครื่องพิมพ์คอมพิวเตอร์ */
         @media print {
-            body * {
-                visibility: hidden;
-            }
-            #doctorNotebookModal, #doctorNotebookModal * {
-                visibility: visible;
-            }
-            #doctorNotebookModal {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
+            body * { visibility: hidden; }
+            #printArea, #printArea * { visibility: visible; }
+            #printArea { 
+                position: absolute; 
+                left: 0; 
+                top: 0; 
+                width: 100%; 
                 background: white !important;
-                box-shadow: none;
+                box-shadow: none; 
                 border: none;
+                padding: 10px;
             }
-            .no-print {
-                display: none !important;
-            }
+            .no-print { display: none !important; }
         }
     </style>
 </head>
@@ -78,7 +72,6 @@
             <div class="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl shadow-sm border border-[#D8E6DD]">
                 <div class="relative w-full md:w-96">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">🔍</span>
-                    <!-- ช่องค้นหาอัจฉริยะ -->
                     <input type="text" id="searchInput" onkeyup="currentPage=1; renderTable()" placeholder="ค้นหาชื่อสัตว์เลี้ยง / เจ้าของ / เบอร์โทร" class="w-full pl-10 pr-4 py-2.5 bg-[#F8FAF8] border border-[#D8E6DD] rounded-xl text-sm focus:outline-none focus:border-[#2D6A4F] text-[#1B4332]">
                 </div>
                 <div class="flex items-center gap-3 w-full md:w-auto justify-end">
@@ -133,7 +126,6 @@
 
         <!-- ================= SECTION 2: หน้าข้อมูลรายชื่อคนไข้ ================= -->
         <div id="sectionPatients" class="flex flex-col gap-6 flex-1 hidden">
-            <!-- Toolbar ค้นหาคนไข้ และปุ่มเพิ่มสมาชิก -->
             <div class="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl shadow-sm border border-[#D8E6DD]">
                 <div class="relative w-full md:w-96">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">🔍</span>
@@ -292,83 +284,147 @@
         </div>
     </div>
 
-    <!-- ================= MODAL: สมุดตรวจรักษาของสัตวแพทย์ (เชื่อมต่อหลังบ้านกับ history) ================= -->
-    <div id="doctorNotebookModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs hidden items-center justify-center p-4 z-50 overflow-y-auto">
-        <div class="bg-white rounded-2xl max-w-3xl w-full p-6 shadow-2xl border border-[#D8E6DD] flex flex-col max-h-[90vh]">
-            <!-- Header ส่วนหัวของสมุดตรวจ -->
-            <div class="flex justify-between items-center pb-4 border-b border-[#D8E6DD]">
+    <!-- Modal แสดงประวัติการรักษา (สำหรับปุ่ม 📋 ในหน้าคนไข้) -->
+    <div id="history-modal" class="fixed inset-0 bg-black/40 backdrop-blur-xs hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-[#D8E6DD] flex flex-col max-h-[85vh]">
+            <div class="flex justify-between items-center mb-4 border-b border-[#D8E6DD] pb-3">
                 <div class="flex items-center space-x-3">
-                    <img id="notebookPetImg" src="" alt="Pet" class="w-14 h-14 rounded-full object-cover border-2 border-[#2D6A4F] shadow-sm">
+                    <img id="historyPetImg" src="" alt="Pet" class="w-12 h-12 rounded-full object-cover border border-[#C8DCD0]">
                     <div>
-                        <h3 id="notebookPetTitle" class="font-bold text-lg text-[#1B4332]">สมุดเวชระเบียนสัตว์ป่วย</h3>
-                        <p id="notebookOwnerSub" class="text-xs text-gray-600">เจ้าของ: - | เบอร์โทร: -</p>
+                        <h3 id="historyPetName" class="font-bold text-base text-[#1B4332]">-</h3>
+                        <p id="historyOwnerInfo" class="text-xs text-gray-500">-</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-2 no-print">
-                    <button onclick="window.print()" class="px-3.5 py-2 bg-[#E9F2EC] hover:bg-[#D8E6DD] text-[#1B4332] rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer" title="ปริ้นเอกสารเวชระเบียน">
-                        🖨️ พิมพ์เอกสาร
-                    </button>
-                    <button onclick="closeDoctorNotebook()" class="text-gray-400 hover:text-gray-600 text-lg font-bold px-2 cursor-pointer">✕</button>
+                <button onclick="closeHistoryModal()" class="text-gray-400 hover:text-gray-600 text-lg font-bold cursor-pointer">✕</button>
+            </div>
+            
+            <div class="mb-2">
+                <h4 class="text-xs font-bold text-[#2D6A4F] uppercase tracking-wider mb-2">📋 ประวัติการเข้ารับการรักษา</h4>
+            </div>
+
+            <!-- รายการประวัติ -->
+            <div id="historyListContainer" class="overflow-y-auto space-y-3 flex-1 pr-1">
+                <!-- เรนเดอร์ด้วย JS -->
+            </div>
+
+            <div class="pt-4 mt-3 border-t border-[#D8E6DD] flex justify-end">
+                <button onclick="closeHistoryModal()" class="px-5 py-2 bg-[#2D6A4F] text-white rounded-xl hover:bg-[#1B4332] shadow-sm cursor-pointer text-sm font-medium">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal สมุดจดประวัติการรักษาของสัตวแพทย์ (เปิดจากปุ่ม 🩺 ในตารางคิว) -->
+    <div id="doctor-log-modal" class="fixed inset-0 bg-black/40 backdrop-blur-xs hidden items-center justify-center p-4 z-50 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-3xl w-full p-6 shadow-xl border border-[#D8E6DD] flex flex-col max-h-[95vh]">
+            <div class="flex justify-between items-center mb-3 border-b border-[#D8E6DD] pb-3 no-print">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-[#2D6A4F] flex items-center justify-center text-white font-bold shadow-sm">
+                        🩺
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-[#1B4332]">สมุดจดประวัติการรักษา (Doctor's Note)</h3>
+                        <p id="docModalSub" class="text-xs text-[#40916C]">บันทึกการตรวจและฟอร์มใบเวชระเบียนสัตว์ป่วย</p>
+                    </div>
+                </div>
+                <button onclick="closeDoctorLogModal()" class="text-gray-400 hover:text-gray-600 text-lg font-bold cursor-pointer">✕</button>
+            </div>
+
+            <input type="hidden" id="docQueueIndex" value="-1">
+
+            <!-- พื้นที่สำหรับพิมพ์เอกสาร (จำลองแบบฟอร์มตามรูปตัวอย่าง) -->
+            <div id="printArea" class="bg-white p-4 border border-gray-300 rounded-xl text-black space-y-3 text-xs my-2 flex-1 overflow-y-auto">
+                
+                <!-- หัวกระดาษคลินิก -->
+                <div class="text-center border-b border-black pb-2">
+                    <h2 class="text-base font-bold tracking-wide">นิธิพันธ์สัตวแพทย์</h2>
+                    <p class="text-[10px] text-gray-700">207, 209 ถนนศุภประยูร ต.หน้าเมือง อ.เมือง จ.ฉะเชิงเทรา 24000 โทร. 08-1637-5507</p>
+                </div>
+
+                <!-- ข้อมูลเจ้าของและสัตว์เลี้ยง -->
+                <div class="border border-black p-2 text-xs space-y-1.5 bg-white">
+                    <div class="flex justify-between border-b border-gray-300 pb-1">
+                        <div class="w-3/5">ชื่อเจ้าของ (Owner's name): <span id="pOwner" class="font-semibold">-</span></div>
+                        <div class="w-2/5">ชื่อสัตว์ (Patient's name): <span id="pPet" class="font-semibold">-</span></div>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-300 pb-1">
+                        <div class="w-3/5">ที่อยู่ (Address): <span id="pAddress" class="text-gray-600">สุราษฎร์ธานี / ฉะเชิงเทรา</span></div>
+                        <div class="w-2/5">โทร. (Tel.): <span id="pPhone" class="font-semibold">-</span></div>
+                    </div>
+                    <div class="flex justify-between pt-0.5">
+                        <div class="w-3/5">E-mail Address: <span class="text-gray-500">-</span></div>
+                        <div class="w-2/5">HN: <span class="font-semibold text-red-600">HN-65024</span></div>
+                    </div>
+                </div>
+
+                <!-- ตารางข้อมูลจำแนกพันธุ์ เพศ อายุ -->
+                <div class="border border-black grid grid-cols-5 text-center text-[11px] divide-x divide-black">
+                    <div class="p-1">
+                        <div class="font-bold border-b border-black pb-0.5">ชนิดสัตว์ (Species)</div>
+                        <div class="p-1 text-left">☑ สุนัข ☐ แมว ☐ อื่นๆ</div>
+                    </div>
+                    <div class="p-1">
+                        <div class="font-bold border-b border-black pb-0.5">พันธุ์ (Breed)</div>
+                        <div id="pBreed" class="p-1 font-semibold">-</div>
+                    </div>
+                    <div class="p-1">
+                        <div class="font-bold border-b border-black pb-0.5">เพศ (Sex) ทำหมัน</div>
+                        <div id="pGender" class="p-1 font-semibold">♂N, ♀S</div>
+                    </div>
+                    <div class="p-1">
+                        <div class="font-bold border-b border-black pb-0.5">อายุ (Age)</div>
+                        <div id="pAge" class="p-1 font-semibold">- ปี</div>
+                    </div>
+                    <div class="p-1">
+                        <div class="font-bold border-b border-black pb-0.5">สัตวแพทย์ (Vet.)</div>
+                        <div id="pDoctor" class="p-1 font-semibold">-</div>
+                    </div>
+                </div>
+
+                <!-- ตาราง SOAP และประวัติการรักษา (Patient History) -->
+                <div class="border border-black">
+                    <div class="bg-gray-100 font-bold text-center border-b border-black py-1 text-[11px]">
+                        ประวัติสัตว์ป่วย (Patient History) / SOAP Note
+                    </div>
+                    <div class="grid grid-cols-12 border-b border-black text-center font-bold text-[10px] bg-gray-50">
+                        <div class="col-span-2 border-r border-black py-1">วันที่ (Date)</div>
+                        <div class="col-span-1 border-r border-black py-1">SOAP</div>
+                        <div class="col-span-8 border-r border-black py-1">รายละเอียดอาการ / การวินิจฉัย / การรักษา</div>
+                        <div class="col-span-1 py-1">Price</div>
+                    </div>
+                    <!-- แถวบันทึกข้อมูลหลัก -->
+                    <div class="grid grid-cols-12 text-[11px] min-h-[140px] items-start">
+                        <div id="printDate" class="col-span-2 border-r border-b border-black p-1.5 text-center font-medium">15 ต.ค. 2026</div>
+                        <div class="col-span-1 border-r border-b border-black p-1.5 text-center font-bold text-[#2D6A4F]">S/O<br>A/P</div>
+                        <div class="col-span-8 border-r border-b border-black p-1.5">
+                            <textarea id="docNoteInput" rows="5" placeholder="กรอกอาการ ผลตรวจ การวินิจฉัย และคำแนะนำ (SOAP)..." class="w-full p-1 bg-transparent border-none focus:outline-none resize-none text-xs text-black"></textarea>
+                        </div>
+                        <div class="col-span-1 border-b border-black p-1.5 text-center">300.-</div>
+                    </div>
+                    <!-- แถวว่างสำรองแบบฟอร์มกระดาษจริง -->
+                    <div class="grid grid-cols-12 text-[11px] h-8 border-b border-black">
+                        <div class="col-span-2 border-r border-black"></div>
+                        <div class="col-span-1 border-r border-black"></div>
+                        <div class="col-span-8 border-r border-black"></div>
+                        <div class="col-span-1"></div>
+                    </div>
+                    <div class="grid grid-cols-12 text-[11px] h-8">
+                        <div class="col-span-2 border-r border-black"></div>
+                        <div class="col-span-1 border-r border-black"></div>
+                        <div class="col-span-8 border-r border-black"></div>
+                        <div class="col-span-1"></div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Content Area (พื้นที่เลื่อนยาวๆ) -->
-            <div class="flex-1 overflow-y-auto py-4 space-y-6 pr-1">
-                <!-- ฟอร์มกรอกบันทึก/แก้ไขการรักษาใหม่ -->
-                <div class="bg-[#F8FAF8] p-4 rounded-2xl border border-[#D8E6DD] space-y-3 no-print shadow-xs">
-                    <h4 class="text-xs font-bold text-[#2D6A4F] uppercase tracking-wider flex items-center gap-1.5">
-                        <span>📝</span> บันทึกเวชระเบียน / การรักษาครั้งใหม่
-                    </h4>
-                    <input type="hidden" id="notebookPatientIndex" value="-1">
-                    <input type="hidden" id="notebookHistoryEditIndex" value="-1">
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <div>
-                            <label class="block text-gray-600 text-xs mb-1 font-medium">📅 วันที่ตรวจ</label>
-                            <input type="text" id="nbDate" value="15 ต.ค. 2026" class="w-full p-2.5 bg-white border border-[#D8E6DD] rounded-xl text-xs focus:outline-none focus:border-[#2D6A4F] text-[#1B4332]">
-                        </div>
-                        <div>
-                            <label class="block text-gray-600 text-xs mb-1 font-medium">📋 ประเภทบริการ / การรักษา</label>
-                            <select id="nbService" class="w-full p-2.5 bg-white border border-[#D8E6DD] rounded-xl text-xs focus:outline-none focus:border-[#2D6A4F] text-[#1B4332]">
-                                <option>🩺 ตรวจสุขภาพประจำปี</option>
-                                <option>💉 ฉีดวัคซีนรวม</option>
-                                <option>💊 ทำแผล / ฉีดยา</option>
-                                <option>🛁 อาบน้ำตัดขน</option>
-                                <option>🏥 ผ่าตัด / แอดมิต</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-gray-600 text-xs mb-1 font-medium">🩺 สัตวแพทย์ผู้ตรวจ</label>
-                            <select id="nbDoctor" class="w-full p-2.5 bg-white border border-[#D8E6DD] rounded-xl text-xs focus:outline-none focus:border-[#2D6A4F] text-[#1B4332]">
-                                <option>นพ.สพ.สมชาย</option>
-                                <option>สพ.ญ.วิไล</option>
-                                <option>ทีม Grooming</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-gray-600 text-xs mb-1 font-medium">📝 บันทึกอาการ / ผลวินิจฉัย / การจ่ายยา (Notes)</label>
-                        <textarea id="nbNote" rows="3" placeholder="ระบุอาการ วินิจฉัย และการรักษาอย่างละเอียด..." class="w-full p-2.5 bg-white border border-[#D8E6DD] rounded-xl text-xs focus:outline-none focus:border-[#2D6A4F] text-[#1B4332]"></textarea>
-                    </div>
-                    <div class="flex justify-end gap-2">
-                        <button onclick="resetNotebookForm()" class="px-3 py-1.5 border border-[#D8E6DD] rounded-xl text-gray-600 text-xs hover:bg-gray-100 cursor-pointer">ล้างฟอร์ม</button>
-                        <button onclick="saveDoctorNote()" class="px-4 py-1.5 bg-[#2D6A4F] text-white rounded-xl text-xs font-medium hover:bg-[#1B4332] shadow-sm cursor-pointer">💾 บันทึกประวัติลงฐานข้อมูล</button>
-                    </div>
+            <!-- ปุ่มควบคุมด้านล่าง (บันทึก / พิมพ์) -->
+            <div class="pt-3 border-t border-[#D8E6DD] flex justify-between items-center no-print">
+                <button onclick="printDoctorLog()" class="px-4 py-2 bg-[#F0F5F1] border border-[#C8DCD0] rounded-xl text-[#2D6A4F] hover:bg-[#E2EBE5] transition cursor-pointer text-sm font-medium flex items-center gap-1.5">
+                    🖨️ พิมพ์เอกสารฟอร์มนี้
+                </button>
+                <div class="flex gap-2">
+                    <button onclick="closeDoctorLogModal()" class="px-4 py-2 border border-[#D8E6DD] rounded-xl text-gray-600 hover:bg-gray-50 cursor-pointer text-sm">ยกเลิก</button>
+                    <button onclick="saveDoctorLog()" class="px-5 py-2 bg-[#2D6A4F] text-white rounded-xl hover:bg-[#1B4332] shadow-sm cursor-pointer text-sm font-medium">💾 บันทึกเข้าระบบ</button>
                 </div>
-
-                <!-- รายการประวัติการรักษาทั้งหมดของน้อง (แสดงย้อนหลังยาวๆ) -->
-                <div>
-                    <h4 class="text-xs font-bold text-[#1B4332] uppercase tracking-wider mb-3">🗂️ ประวัติการรักษาที่บันทึกไว้ทั้งหมดในระบบ (history)</h4>
-                    <div id="notebookHistoryList" class="space-y-3">
-                        <!-- เรนเดอร์ด้วย JavaScript -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer ของ Modal -->
-            <div class="pt-4 border-t border-[#D8E6DD] flex justify-between items-center no-print">
-                <span class="text-xs text-gray-400">นิธิพันธ์สัตวแพทย์ - เวชระเบียนอิเล็กทรอนิกส์</span>
-                <button onclick="closeDoctorNotebook()" class="px-5 py-2 bg-[#2D6A4F] text-white rounded-xl hover:bg-[#1B4332] shadow-sm cursor-pointer text-sm font-medium">ปิดหน้าต่าง</button>
             </div>
         </div>
     </div>
@@ -378,9 +434,8 @@
         Nitiphan Animal Clinic Management System • GitHub Pages Ready
     </footer>
 
-    <!-- JavaScript สำหรับระบบจัดการคิวและหลังบ้านเชื่อมสมุดตรวจ -->
+    <!-- JavaScript -->
     <script>
-        // ข้อมูลตัวอย่างนัดหมาย
         let appointments = [
             { date: "2026-10-15", time: "10:00-12:00", pet: "น้องหมีพู (ชิทู)", owner: "คุณสมชาย (081-234-5678)", service: "🩺 ตรวจสุขภาพประจำปี", doctor: "นพ.สพ.สมชาย", status: "เสร็จสิ้น" },
             { date: "2026-10-15", time: "15:00-18:00", pet: "น้องทองกวาว (เปอร์เซีย)", owner: "คุณหญิง (089-999-8888)", service: "💉 ฉีดวัคซีนรวม", doctor: "สพ.ญ.วิไล", status: "กำลังตรวจ" },
@@ -390,7 +445,6 @@
             { date: "2026-10-15", time: "11:00-11:30", pet: "น้องมาร์ลี่ (ไซบีเรียน)", owner: "คุณแนน (081-888-9911)", service: "🩺 ตรวจสุขภาพประจำปี", doctor: "นพ.สพ.สมชาย", status: "รอเข้ารับบริการ" }
         ];
 
-        // ฐานข้อมูลรายชื่อคนไข้ พร้อมประวัติการรักษา (history)
         let patients = [
             { 
                 img: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=100&h=100&fit=crop", 
@@ -477,7 +531,6 @@
         let currentPage = 1;
         const rowsPerPage = 10;
 
-        // สลับหน้า (คิว / คนไข้)
         function switchTab(tab) {
             const btnQueue = document.getElementById('btnQueueTab');
             const btnPatient = document.getElementById('btnPatientTab');
@@ -502,124 +555,6 @@
             }
         }
 
-        // ค้นหา index ของคนไข้จากชื่อสัตว์เลี้ยงในคิว
-        function findPatientIndexByName(petQuery) {
-            let cleanName = petQuery.split('(')[0].trim();
-            let index = patients.findIndex(p => p.name.includes(cleanName) || cleanName.includes(p.name));
-            if(index === -1 && patients.length > 0) {
-                index = 0;
-            }
-            return index;
-        }
-
-        // เปิดสมุดตรวจรักษาของหมอจากตารางคิว
-        function openDoctorNotebook(appointmentIndex) {
-            let app = appointments[appointmentIndex];
-            let pIndex = findPatientIndexByName(app.pet);
-            
-            if(pIndex === -1) {
-                alert('ไม่พบรายชื่อคนไข้ในระบบเวชระเบียน กรุณาเพิ่มข้อมูลคนไข้ก่อน');
-                return;
-            }
-
-            let p = patients[pIndex];
-            document.getElementById('notebookPatientIndex').value = pIndex;
-            document.getElementById('notebookPetImg').src = p.img;
-            document.getElementById('notebookPetTitle').innerText = `${p.name} (${p.breed}) - อายุ: ${p.age}`;
-            document.getElementById('notebookOwnerSub').innerText = `เจ้าของ: ${p.owner} | โทร: ${p.phone} | น้ำหนัก: ${p.weight}`;
-
-            // ตั้งค่าเริ่มต้นฟอร์มตามคิวปัจจุบัน
-            document.getElementById('notebookHistoryEditIndex').value = "-1";
-            document.getElementById('nbDate').value = app.date || "15 ต.ค. 2026";
-            document.getElementById('nbService').value = app.service;
-            document.getElementById('nbDoctor').value = app.doctor;
-            document.getElementById('nbNote').value = "";
-
-            renderNotebookHistory(pIndex);
-
-            document.getElementById('doctorNotebookModal').classList.remove('hidden');
-            document.getElementById('doctorNotebookModal').classList.add('flex');
-        }
-
-        function closeDoctorNotebook() {
-            document.getElementById('doctorNotebookModal').classList.remove('flex');
-            document.getElementById('doctorNotebookModal').classList.add('hidden');
-        }
-
-        function resetNotebookForm() {
-            document.getElementById('notebookHistoryEditIndex').value = "-1";
-            document.getElementById('nbDate').value = "15 ต.ค. 2026";
-            document.getElementById('nbNote').value = "";
-        }
-
-        // เรนเดอร์ประวัติการรักษาในสมุดตรวจ
-        function renderNotebookHistory(pIndex) {
-            let p = patients[pIndex];
-            let container = document.getElementById('notebookHistoryList');
-            container.innerHTML = '';
-
-            if(!p.history || p.history.length === 0) {
-                container.innerHTML = `<div class="text-center py-6 text-gray-400 text-xs bg-white rounded-xl border border-[#D8E6DD]">ยังไม่มีบันทึกประวัติการรักษา</div>`;
-                return;
-            }
-
-            p.history.forEach((h, hIdx) => {
-                let div = document.createElement('div');
-                div.className = "bg-white p-4 rounded-xl border border-[#D8E6DD] text-xs space-y-1.5 shadow-xs";
-                div.innerHTML = `
-                    <div class="flex justify-between items-center font-bold text-[#1B4332]">
-                        <span class="text-sm">🔹 ${h.service}</span>
-                        <div class="flex items-center gap-2">
-                            <span class="text-gray-500 font-normal">📅 ${h.date}</span>
-                            <button onclick="editNotebookHistory(${pIndex}, ${hIdx})" class="px-2.5 py-1 bg-[#F0F5F1] hover:bg-[#E2EBE5] text-[#2D6A4F] rounded-lg cursor-pointer no-print font-medium">✏️ แก้ไข</button>
-                        </div>
-                    </div>
-                    <div class="text-gray-600">🩺 แพทย์ผู้ตรวจ: <span class="font-medium text-[#2D6A4F]">${h.doctor}</span></div>
-                    <div class="text-gray-700 bg-[#FAFCFA] p-2.5 rounded-lg border border-[#E9F2EC] mt-1">📝 <b>บันทึกการรักษา / ผลวินิจฉัย:</b> ${h.note || '-'}</div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        // แก้ไขรายการประวัติเดิม
-        function editNotebookHistory(pIndex, hIdx) {
-            let h = patients[pIndex].history[hIdx];
-            document.getElementById('notebookHistoryEditIndex').value = hIdx;
-            document.getElementById('nbDate').value = h.date;
-            document.getElementById('nbService').value = h.service;
-            document.getElementById('nbDoctor').value = h.doctor;
-            document.getElementById('nbNote').value = h.note;
-            document.getElementById('nbNote').focus();
-        }
-
-        // บันทึกประวัติการรักษาลงใน array history ของคนไข้
-        function saveDoctorNote() {
-            let pIndex = parseInt(document.getElementById('notebookPatientIndex').value);
-            let hEditIdx = parseInt(document.getElementById('notebookHistoryEditIndex').value);
-            let date = document.getElementById('nbDate').value.trim();
-            let service = document.getElementById('nbService').value;
-            let doctor = document.getElementById('nbDoctor').value;
-            let note = document.getElementById('nbNote').value.trim();
-
-            if(!note) {
-                alert('กรุณากรอกบันทึกอาการหรือผลการรักษาก่อนบันทึก');
-                return;
-            }
-
-            let newRecord = { date, service, doctor, note };
-
-            if(hEditIdx === -1) {
-                patients[pIndex].history.unshift(newRecord);
-            } else {
-                patients[pIndex].history[hEditIdx] = newRecord;
-            }
-
-            resetNotebookForm();
-            renderNotebookHistory(pIndex);
-            alert('บันทึกเวชระเบียนเข้าระบบสำเร็จ!');
-        }
-
-        // เรนเดอร์ตารางคนไข้
         function renderPatientTable() {
             const tbody = document.getElementById('patientTableBody');
             const search = document.getElementById('searchPatientInput').value.toLowerCase();
@@ -650,26 +585,126 @@
                     <td class="py-3.5 px-4 text-gray-600">${p.gender}</td>
                     <td class="py-3.5 px-4 font-semibold text-[#2D6A4F]">${p.weight}</td>
                     <td class="py-3.5 px-4 text-center space-x-1">
-                        <button onclick="openPatientNotebookDirect(${realIndex})" class="p-1.5 hover:bg-[#E2EBE5] rounded-lg text-emerald-700 transition cursor-pointer" title="สมุดเวชระเบียน">🩺</button>
+                        <button onclick="openHistoryModal(${realIndex})" class="p-1.5 hover:bg-[#E2EBE5] rounded-lg text-emerald-700 transition cursor-pointer" title="ประวัติการรักษา">📋</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // เปิดสมุดตรวจจากหน้าคนไข้โดยตรง
-        function openPatientNotebookDirect(pIndex) {
-            let p = patients[pIndex];
-            document.getElementById('notebookPatientIndex').value = pIndex;
-            document.getElementById('notebookPetImg').src = p.img;
-            document.getElementById('notebookPetTitle').innerText = `${p.name} (${p.breed}) - อายุ: ${p.age}`;
-            document.getElementById('notebookOwnerSub').innerText = `เจ้าของ: ${p.owner} | โทร: ${p.phone} | น้ำหนัก: ${p.weight}`;
+        function openHistoryModal(index) {
+            let p = patients[index];
+            document.getElementById('historyPetImg').src = p.img;
+            document.getElementById('historyPetName').innerText = `${p.name} (${p.breed})`;
+            document.getElementById('historyOwnerInfo').innerText = `เจ้าของ: ${p.owner} | เบอร์โทร: ${p.phone}`;
 
-            resetNotebookForm();
-            renderNotebookHistory(pIndex);
+            let container = document.getElementById('historyListContainer');
+            container.innerHTML = '';
 
-            document.getElementById('doctorNotebookModal').classList.remove('hidden');
-            document.getElementById('doctorNotebookModal').classList.add('flex');
+            if(!p.history || p.history.length === 0) {
+                container.innerHTML = `<div class="text-center py-6 text-gray-400 text-xs">ยังไม่มีประวัติการรักษาในระบบ</div>`;
+            } else {
+                p.history.forEach((h) => {
+                    let div = document.createElement('div');
+                    div.className = "bg-[#F8FAF8] p-3 rounded-xl border border-[#D8E6DD] text-xs space-y-1";
+                    div.innerHTML = `
+                        <div class="flex justify-between items-center font-bold text-[#1B4332]">
+                            <span>${h.service}</span>
+                            <span class="text-gray-500 font-normal">📅 ${h.date}</span>
+                        </div>
+                        <div class="text-gray-600">🩺 แพทย์ผู้ตรวจ: <span class="font-medium text-[#2D6A4F]">${h.doctor}</span></div>
+                        <div class="text-gray-500 bg-white p-2 rounded-lg border border-[#E9F2EC] mt-1">📝 บันทึก: ${h.note || '-'}</div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            document.getElementById('history-modal').classList.remove('hidden');
+            document.getElementById('history-modal').classList.add('flex');
+        }
+
+        function closeHistoryModal() {
+            document.getElementById('history-modal').classList.remove('flex');
+            document.getElementById('history-modal').classList.add('hidden');
+        }
+
+        // --- ฟังก์ชันสำหรับสมุดจดประวัติการรักษาของสัตวแพทย์ ---
+        function openDoctorLogModal(index) {
+            let item = appointments[index];
+            document.getElementById('docQueueIndex').value = index;
+            
+            let petName = item.pet.split('(')[0].trim();
+            let petBreed = item.pet.includes('(') ? item.pet.split('(')[1].replace(')', '').trim() : 'ทั่วไป';
+            let ownerName = item.owner.split('(')[0].trim();
+            let ownerPhone = item.owner.includes('(') ? item.owner.split('(')[1].replace(')', '').trim() : '-';
+
+            let foundP = patients.find(p => p.name.includes(petName));
+            let ageStr = foundP ? foundP.age : '1 ปี';
+            let genderStr = foundP ? foundP.gender : '♂N';
+
+            document.getElementById('pOwner').innerText = `${ownerName}`;
+            document.getElementById('pPet').innerText = `${petName}`;
+            document.getElementById('pPhone').innerText = `${ownerPhone}`;
+            document.getElementById('pBreed').innerText = `${petBreed}`;
+            document.getElementById('pGender').innerText = `${genderStr}`;
+            document.getElementById('pAge').innerText = `${ageStr}`;
+            document.getElementById('pDoctor').innerText = `${item.doctor}`;
+            document.getElementById('printDate').innerText = item.date || "15 ต.ค. 2026";
+            
+            document.getElementById('docNoteInput').value = "";
+
+            document.getElementById('doctor-log-modal').classList.remove('hidden');
+            document.getElementById('doctor-log-modal').classList.add('flex');
+        }
+
+        function closeDoctorLogModal() {
+            document.getElementById('doctor-log-modal').classList.remove('flex');
+            document.getElementById('doctor-log-modal').classList.add('hidden');
+        }
+
+        function saveDoctorLog() {
+            let index = parseInt(document.getElementById('docQueueIndex').value);
+            let note = document.getElementById('docNoteInput').value.trim();
+            if(!note) {
+                alert('กรุณากรอกบันทึกผลการตรวจ (SOAP) ก่อนบันทึก');
+                return;
+            }
+
+            let item = appointments[index];
+            
+            let newHistoryItem = {
+                date: item.date || "15 ต.ค. 2026",
+                service: item.service,
+                doctor: item.doctor,
+                note: note
+            };
+
+            let foundPatient = patients.find(p => item.pet.includes(p.name));
+            if(foundPatient) {
+                foundPatient.history.unshift(newHistoryItem);
+            } else {
+                patients.push({
+                    img: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=100&h=100&fit=crop",
+                    name: item.pet.split('(')[0].trim(),
+                    breed: item.pet.includes('(') ? item.pet.split('(')[1].replace(')', '').trim() : 'ทั่วไป',
+                    owner: item.owner.split('(')[0].trim(),
+                    phone: item.owner.includes('(') ? item.owner.split('(')[1].replace(')', '').trim() : '-',
+                    age: '1 ปี',
+                    gender: 'ผู้',
+                    weight: '5.0 กก.',
+                    history: [newHistoryItem]
+                });
+            }
+
+            item.status = "เสร็จสิ้น";
+
+            alert('บันทึกประวัติการรักษาและอัปเดตเวชระเบียนเรียบร้อยแล้ว!');
+            closeDoctorLogModal();
+            renderTable();
+        }
+
+        function printDoctorLog() {
+            window.print();
         }
 
         function filterByStatus(status) {
@@ -753,7 +788,7 @@
                     <td class="py-3.5 px-4 text-center space-x-1">
                         <button onclick="openEditModal(${realIndex})" class="p-1.5 hover:bg-[#E2EBE5] rounded-lg text-gray-600 transition cursor-pointer" title="แก้ไขข้อมูล">✏️</button>
                         <button onclick="deleteAppointment(${realIndex})" class="p-1.5 hover:bg-red-50 rounded-lg text-red-500 transition cursor-pointer" title="ยกเลิกรายการ">🗑️</button>
-                        <button onclick="openDoctorNotebook(${realIndex})" class="p-1.5 hover:bg-[#E2EBE5] rounded-lg text-[#2D6A4F] transition cursor-pointer font-bold" title="สมุดตรวจรักษาของหมอ">🩺</button>
+                        <button onclick="openDoctorLogModal(${realIndex})" class="p-1.5 hover:bg-[#E2EBE5] rounded-lg text-emerald-700 transition cursor-pointer" title="สมุดจดประวัติการรักษา (สัตวแพทย์)">🩺</button>
                     </td>
                 `;
                 tableBody.appendChild(row);
@@ -882,67 +917,6 @@
             alert('รีเฟรชข้อมูลคิวล่าสุดเรียบร้อยแล้ว');
         }
 
-        function openPatientModal() {
-            document.getElementById('patientModalTitle').innerText = "เพิ่มสมาชิกคนไข้ใหม่";
-            document.getElementById('editPatientIndex').value = "-1";
-            document.getElementById('inputPatientName').value = "";
-            document.getElementById('inputPatientBreed').value = "";
-            document.getElementById('inputPatientOwner').value = "";
-            document.getElementById('inputPatientAge').value = "";
-            document.getElementById('inputPatientGender').value = "ผู้";
-            document.getElementById('inputPatientWeight').value = "";
-            document.getElementById('inputPatientImg').value = "";
-            document.getElementById('patient-modal').classList.remove('hidden');
-            document.getElementById('patient-modal').classList.add('flex');
-        }
-
-        function closePatientModal() {
-            document.getElementById('patient-modal').classList.remove('flex');
-            document.getElementById('patient-modal').classList.add('hidden');
-        }
-
-        function savePatient() {
-            let editIndex = parseInt(document.getElementById('editPatientIndex').value);
-            let name = document.getElementById('inputPatientName').value.trim();
-            let breed = document.getElementById('inputPatientBreed').value.trim();
-            let ownerFull = document.getElementById('inputPatientOwner').value.trim();
-            let age = document.getElementById('inputPatientAge').value.trim();
-            let gender = document.getElementById('inputPatientGender').value;
-            let weight = document.getElementById('inputPatientWeight').value.trim();
-            let img = document.getElementById('inputPatientImg').value.trim() || "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=100&h=100&fit=crop";
-
-            if(!name || !ownerFull) {
-                alert('กรุณากรอกชื่อสัตว์เลี้ยงและชื่อเจ้าของให้ครบถ้วน');
-                return;
-            }
-
-            let ownerName = ownerFull;
-            let phoneNum = "-";
-            if(ownerFull.includes('(')) {
-                let parts = ownerFull.split('(');
-                ownerName = parts[0].trim();
-                phoneNum = parts[1].replace(')', '').trim();
-            }
-
-            if(editIndex === -1) {
-                let newPatient = { img, name, breed, owner: ownerName, phone: phoneNum, age, gender, weight, history: [] };
-                patients.unshift(newPatient);
-            } else {
-                patients[editIndex].img = img;
-                patients[editIndex].name = name;
-                patients[editIndex].breed = breed;
-                patients[editIndex].owner = ownerName;
-                patients[editIndex].phone = phoneNum;
-                patients[editIndex].age = age;
-                patients[editIndex].gender = gender;
-                patients[editIndex].weight = weight;
-            }
-
-            closePatientModal();
-            renderPatientTable();
-        }
-
-        // โหลดตารางครั้งแรก
         renderTable();
     </script>
 </body>
