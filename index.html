@@ -385,7 +385,7 @@
                     <div class="bg-gray-100 font-bold text-center border-b border-black py-1 text-[11px]">
                         ประวัติสัตว์ป่วย (Patient History) / SOAP Note
                     </div>
-                    <div class="grid grid-cols-12 border-b border-black text-center font-bold text-[10px] bg-gray-50">
+                   <div class="grid grid-cols-12 border-b border-black text-center font-bold text-[10px] bg-gray-50">
                         <div class="col-span-2 border-r border-black py-1">วันที่ (Date)</div>
                         <div class="col-span-1 border-r border-black py-1">SOAP</div>
                         <div class="col-span-8 border-r border-black py-1">รายละเอียดอาการ / การวินิจฉัย / การรักษา</div>
@@ -398,7 +398,10 @@
                         <div class="col-span-8 border-r border-b border-black p-1.5">
                             <textarea id="docNoteInput" rows="5" placeholder="กรอกอาการ ผลตรวจ การวินิจฉัย และคำแนะนำ (SOAP)..." class="w-full p-1 bg-transparent border-none focus:outline-none resize-none text-xs text-black"></textarea>
                         </div>
-                        <div class="col-span-1 border-b border-black p-1.5 text-center">300.-</div>
+                        <!-- ส่วนที่เพิ่ม: ช่องกรอกราคาสำหรับแก้ไข -->
+                        <div class="col-span-1 border-b border-black p-1 text-center flex items-center justify-center">
+                            <input type="text" id="docPriceInput" value="300" placeholder="ราคา" class="w-full text-center p-1 bg-transparent border-none focus:outline-none text-xs text-black font-semibold">
+                        </div>
                     </div>
                     <!-- แถวว่างสำรองแบบฟอร์มกระดาษจริง -->
                     <div class="grid grid-cols-12 text-[11px] h-8 border-b border-black">
